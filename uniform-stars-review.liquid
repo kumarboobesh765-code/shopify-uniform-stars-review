@@ -1,0 +1,89 @@
+{%- assign base = product.id | modulo: 11 -%}
+{%- assign rating = base | times: 0.1 | plus: 4.0 -%}
+{%- assign rating_display = rating | round: 1 -%}
+{%- assign star_count = rating | round: 0 -%}
+{%- assign max_stars = 5 -%}
+
+{%- assign raw_count = product.id | modulo: 9000 | plus: 200 -%}
+{%- assign thousands = raw_count | divided_by: 1000 -%}
+{%- assign remainder = raw_count | modulo: 1000 -%}
+{%- assign remainder_str = remainder -%}
+{%- if thousands > 0 -%}
+  {%- if remainder < 10 -%}
+    {%- assign remainder_str = '00' | append: remainder_str -%}
+  {%- elsif remainder < 100 -%}
+    {%- assign remainder_str = '0' | append: remainder_str -%}
+  {%- endif -%}
+  {%- assign formatted_count = thousands | append: ',' | append: remainder_str -%}
+{%- else -%}
+  {%- assign formatted_count = remainder_str -%}
+{%- endif -%}
+
+<div class="uniform-stars-review">
+  <span class="stars">
+    {%- for i in (1..max_stars) -%}
+      {%- if i <= star_count -%}
+        <span class="star active">★</span>
+      {%- else -%}
+        <span class="star inactive">★</span>
+      {%- endif -%}
+    {%- endfor -%}
+  </span>
+
+  <span class="rating-pill">({{ rating_display }})</span>
+  <span class="review-count">{{ formatted_count }} REVIEWS</span>
+</div>
+
+<style>
+.uniform-stars-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px !important;
+  margin-bottom: 2px !important;
+  white-space: nowrap;
+}
+
+.uniform-stars-review .stars {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.uniform-stars-review .star {
+  font-size: 16px;
+  display: inline-block;
+  transform: translateY(1px);
+}
+
+.uniform-stars-review .star.active {
+  color: #FFD14D !important;
+  text-shadow: 0 0 6px rgba(255,209,77,0.9),
+               0 0 10px rgba(255,230,120,0.45);
+}
+
+.uniform-stars-review .star.inactive {
+  color: rgba(255,255,255,0.2) !important;
+}
+
+.uniform-stars-review .rating-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  min-width: 34px;
+  border-radius: 10px;
+  background: linear-gradient(180deg,#2ecc71,#1fa85a);
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.uniform-stars-review .review-count {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff !important;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+</style>
